@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>ESP32 + DHT22 Web Server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body onload="sendRequest()">
+  <h1>ESP32 + DHT22 Web Server</h1>
+  <table class="tabla">
+    <tr>
+      <td class="title">Temperatura</td>
+      <td id="temperatura" class="data"></td>
+    </tr>
+    <tr>
+      <td class="title">Humedad</td>
+      <td id="humedad" class="data"></td>
+    </tr>
+  </table>
+  <p><button id="refresh" class="button" onClick="sendRequest()">Refresh</button></p>
+  <script>
+    function sendRequest() {
+      console.log("Server data requesting...");
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("GET", "/data", true);
+      xhttp.setRequestHeader("Accept", "application/json");
+      xhttp.onload = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          var resp = JSON.parse(this.responseText);
+          let h = resp.humedad.toFixed(2);
+          let t = resp.temperatura.toFixed(1);
+          document.getElementById("humedad").innerHTML = h + " %";
+          document.getElementById("temperatura").innerHTML = t + " &#8451;";
+        }
+      };
+
+      xhttp.onerror = function (e) {
+        console.log("Error Unresponsive Domain ");
+      };
+
+      xhttp.send();
+    }
+
+  </script>
+</body>
+
+</html>
